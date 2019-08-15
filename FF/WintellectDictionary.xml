@@ -10,6 +10,7 @@
       <Word>wintellect</Word>
       <Word>Arg</Word>
       <Word>nostats</Word>
+      <Word>norecurse</Word>
       <Word>ms</Word>
     </Recognized>
     <Deprecated>

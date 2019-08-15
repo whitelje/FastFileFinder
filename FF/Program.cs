@@ -294,7 +294,8 @@ namespace FastFind
                     {
                         // Does this match "." or ".."? If so get out.
                         if ((w32FindData.cFileName.Equals(".", StringComparison.OrdinalIgnoreCase) ||
-                            (w32FindData.cFileName.Equals("..", StringComparison.OrdinalIgnoreCase))))
+                            (w32FindData.cFileName.Equals("..", StringComparison.OrdinalIgnoreCase)) ||
+                            (w32FindData.cFileName.Equals(".svn", StringComparison.OrdinalIgnoreCase))))
                         {
                             continue;
                         }
@@ -302,20 +303,23 @@ namespace FastFind
                         // Is this a directory? If so, queue up another task.
                         if ((w32FindData.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
                         {
-                            Interlocked.Increment(ref totalDirectories);
-
-                            String subDirectory = Path.Combine(directory, w32FindData.cFileName);
-                            if (Options.IncludeDirectories)
+                            if (Options.NoRecurse == false)
                             {
-                                if (IsNameMatch(w32FindData.cFileName))
-                                {
-                                    Interlocked.Increment(ref totalMatches);
-                                    QueueConsoleWriteLine(subDirectory);
-                                }
-                            }
+                                Interlocked.Increment(ref totalDirectories);
 
-                            // Recurse our way to happiness....
-                            Task.Factory.StartNew(() => RecurseFiles(subDirectory), TaskCreationOptions.AttachedToParent);
+                                String subDirectory = Path.Combine(directory, w32FindData.cFileName);
+                                if (Options.IncludeDirectories)
+                                {
+                                    if (IsNameMatch(w32FindData.cFileName))
+                                    {
+                                        Interlocked.Increment(ref totalMatches);
+                                        QueueConsoleWriteLine(subDirectory);
+                                    }
+                                }
+
+                                // Recurse our way to happiness....
+                                Task.Factory.StartNew(() => RecurseFiles(subDirectory), TaskCreationOptions.AttachedToParent);
+                            }
                         }
                         else
                         {

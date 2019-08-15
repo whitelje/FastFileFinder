@@ -73,6 +73,16 @@ namespace FastFind
         private const String HelpFlagShort = "?";
 
         /// <summary>
+        /// The do not recurse flag.
+        /// </summary>
+        private const String NoRecurseFlag = "norecurse";
+
+        /// <summary>
+        /// The short do not recurse flag.
+        /// </summary>
+        private const String NoRecurseFlagShort = "nr";
+
+        /// <summary>
         /// The raw patterns as they come in from the command line.
         /// </summary>
         private readonly List<String> rawPatterns;
@@ -92,7 +102,7 @@ namespace FastFind
         /// </summary>
         public FastFindArgumentParser()
             : base(
-                new[] { RegExFlag, RegExFlagShort, IncludeDirectoryName, IncludeDirectoryNameShort, NoStats, NoStatsShort, HelpFlagShort },
+                new[] { RegExFlag, RegExFlagShort, IncludeDirectoryName, IncludeDirectoryNameShort, NoStats, NoStatsShort, HelpFlagShort, NoRecurseFlag, NoRecurseFlagShort },
                 new[] { PathFlag, PathFlagShort },
                 false)
         {
@@ -100,6 +110,7 @@ namespace FastFind
             this.useRegEx = false;
             this.IncludeDirectories = false;
             this.NoStatistics = false;
+            this.NoRecurse = false;
             this.Patterns = new List<Regex>();
             this.rawPatterns = new List<String>();
         }
@@ -120,6 +131,12 @@ namespace FastFind
         /// search stats.
         /// </summary>
         public Boolean NoStatistics { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the user wants to only search
+        /// the top level directory.
+        /// </summary>
+        public Boolean NoRecurse { get; private set; }
 
         /// <summary>
         /// Gets the patterns to search for.
@@ -189,6 +206,11 @@ namespace FastFind
                 case HelpFlag:
                 case HelpFlagShort:
                     ss = SwitchStatus.ShowUsage;
+                    break;
+
+                case NoRecurseFlag:
+                case NoRecurseFlagShort:
+                    this.NoRecurse = true;
                     break;
 
                 default:
